@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QThread>
+#include <QFile>
+#include <QTextStream>
 
 #include "computation.h"
 
@@ -20,6 +22,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QList<int> elevationList;
 };
 
 #endif // MAINWINDOW_H

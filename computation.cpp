@@ -1,8 +1,9 @@
 #include "computation.h"
 
-computation::computation(QObject *parent)
+computation::computation(QObject *parent, QString filename, QList<int> elevList)
 {
-
+    fileName = filename;
+    elevationList = elevList;
 }
 
 computation::~computation()
@@ -12,5 +13,21 @@ computation::~computation()
 
 void computation::slotCompute()
 {
-    qDebug() << "filename" << QThread::currentThreadId();
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug("Opening error.");
+    }
+    QTextStream stream(&file);
+
+    QMap<int, QStringList> azimuthMap;
+
+    int i = 0;
+    while(!stream.atEnd()){
+        QString line = stream.readLine();
+        qDebug("alma");
+        azimuthMap[elevationList.at(i)] = line.split("\t");
+        i++;
+    }
+    file.close();
+
 }
