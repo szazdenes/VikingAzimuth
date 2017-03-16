@@ -52,8 +52,9 @@ void computation::slotCompute()
     azimuthFile.close();
 
 
-    /*convert string list to double list and use central angle correction*/
+    /*convert string list to double list, use central angle correction, calculate delta azimuth with average and StD*/
     QMap<int, QList<double> > azimuthDoubleMap, deltaAzimuthMap;
+    QMap<int, QPair<double, double> >  aveStDMap;
     if(!azimuthMap.isEmpty() && azimuthMap.size() == elevationList.size()){
         foreach(int currentKey, azimuthMap.keys()){
             QList<double> currentList, deltaList;
@@ -64,12 +65,18 @@ void computation::slotCompute()
             }
             azimuthDoubleMap[currentKey] = currentList;
             deltaAzimuthMap[currentKey] = deltaList;
+            aveStDMap[currentKey].first = getAverage(deltaList); //average
+            aveStDMap[currentKey].second = getStD(deltaList); //StD
         }
     }
     else{
         qDebug("Error with azimuthMap");
         return;
     }
+
+    emit signalReady(aveStDMap);
+
+
 }
 
 double computation::centralAngleCorrection(double num)
@@ -91,10 +98,50 @@ double computation::centralAngleCorrection(double num)
 
     if(num == 0)
         result = 0;
-    if(num < 0)
-        result = x1;
-    if(num > 0)
-        result = x4;
+    else{
+        QMap<QString, double> xMap, xMapValue;
+        xMapValue["x1"] = x1;
+        xMapValue["x2"] = x2;
+        xMapValue["x3"] = x3;
+        xMapValue["x4"] = x4;
 
+        if(num/qAbs(num) == x1/qAbs(x1)){
+            xMap["x1"] = qAbs(qAbs(num)-qAbs(x1));
+        }
+        if(num/qAbs(num) == x2/qAbs(x2)){
+            xMap["x2"] = qAbs(qAbs(num)-qAbs(x2));
+        }
+        if(num/qAbs(num) == x3/qAbs(x3)){
+            xMap["x3"] = qAbs(qAbs(num)-qAbs(x3));
+        }
+        if(num/qAbs(num) == x4/qAbs(x4)){
+            xMap["x4"] = qAbs(qAbs(num)-qAbs(x4));
+        }
+
+        QList<double> xList = xMap.values();
+        qSort(xList);
+
+        QString key = xMap.key(xList.at(0));
+        result = xMapValue[key];
+    }
+
+    return result;
+}
+
+double computation::getAverage(QList<double> &list)
+{
+    double result = 0;
+    for (int i = 0; i < list.size(); i++)
+        result += (double)list.at(i) / (double)list.size();
+    return result;
+}
+
+double computation::getStD(QList<double> &list)
+{
+    double result = 0;
+    double average = getAverage(list);
+    for (int i = 0; i < list.size(); i++)
+        result += (((double)list.at(i) - average)*((double)list.at(i) - average)) / (double)list.size();
+    result = qSqrt(result);
     return result;
 }

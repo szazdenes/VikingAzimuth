@@ -14,7 +14,7 @@ public:
     ~computation();
 
 signals:
-    void singalReady(QMap<int, QPair<double, double> >);
+    void signalReady(QMap<int, QPair<double, double> >);
 
 public slots:
     void slotCompute();
@@ -23,6 +23,8 @@ private:
     QString fileName;
     QList<int> elevationList;
     double centralAngleCorrection(double num);
+    double getAverage(QList<double> &list);
+    double getStD(QList<double> &list);
 };
 
 #endif // COMPUTATION_H
