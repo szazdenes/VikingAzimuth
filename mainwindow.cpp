@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     file.close();
 
     QThread *thread = new QThread();
-    computation *work = new computation(this, "../SD.dat", elevationList);
+    computation *work = new computation("../SD.dat", elevationList);
     work->moveToThread(thread);
 
     connect(thread, &QThread::started, work, &computation::slotCompute);

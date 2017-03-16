@@ -4,12 +4,13 @@
 #include <QObject>
 #include <QFile>
 #include <QTextStream>
+#include <QtMath>
 
 class computation : public QObject
 {
     Q_OBJECT
 public:
-    explicit computation(QObject *parent = 0, QString filename = NULL, QList<int> elevList = QList<int>());
+    explicit computation(QString filename = NULL, QList<int> elevList = QList<int>());
     ~computation();
 
 signals:
@@ -21,6 +22,7 @@ public slots:
 private:
     QString fileName;
     QList<int> elevationList;
+    double centralAngleCorrection(double num);
 };
 
 #endif // COMPUTATION_H
