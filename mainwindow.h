@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QThread>
+
+#include "computation.h"
 
 namespace Ui {
 class MainWindow;
