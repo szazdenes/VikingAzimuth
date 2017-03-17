@@ -20,6 +20,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void slotComputingReady(QMap<int, QPair<double, double> > aveStD, QString filename);
+
 private:
     Ui::MainWindow *ui;
     QList<int> elevationList;

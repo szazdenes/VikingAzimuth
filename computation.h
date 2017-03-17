@@ -14,7 +14,7 @@ public:
     ~computation();
 
 signals:
-    void signalReady(QMap<int, QPair<double, double> >);
+    void signalReady(QMap<int, QPair<double, double> > aveStD, QString filename);
 
 public slots:
     void slotCompute();

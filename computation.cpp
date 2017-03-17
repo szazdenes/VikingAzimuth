@@ -74,9 +74,7 @@ void computation::slotCompute()
         return;
     }
 
-    emit signalReady(aveStDMap);
-
-
+    emit signalReady(aveStDMap, fileName);
 }
 
 double computation::centralAngleCorrection(double num)
