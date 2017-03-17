@@ -30,7 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(thread, &QThread::finished, work, &computation::deleteLater);
 
     thread->start();
-    QApplication::processEvents();
     thread->quit();
 
 }
@@ -50,7 +49,7 @@ void MainWindow::slotComputingReady(QMap<int, QPair<double, double> > aveStD, QS
     }
     elevationList.clear();
     QTextStream out(&outfile);
-    out << "elevation" << "\t" << "average" << "StD" << "\n";
+    out << "elevation" << "\t" << "average" << "\t" << "StD" << "\n";
 
     foreach(int currentkey, aveStD.keys()){
         out << QString::number(currentkey) << "\t" << QString::number(aveStD[currentkey].first) << "\t" << QString::number(aveStD[currentkey].second) << "\n";
