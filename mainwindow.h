@@ -5,8 +5,11 @@
 #include <QThread>
 #include <QFile>
 #include <QTextStream>
+#include <QFileDialog>
+#include <QGraphicsScene>
 
 #include "computation.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -23,9 +26,18 @@ public:
 public slots:
     void slotComputingReady(QMap<int, QPair<double, double> > aveStD, QString filename);
 
+private slots:
+
+    void on_loadPushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QList<int> elevationList;
+    void plotGnuPlot(QString outfileName, QString outfileNameps, QString plotfileName, QString xlabel, QString ylabel, QString xrange, QString yrange);
+    void refreshImage(QString imageName);
+    void fitImage(QImage &image, QGraphicsView *view);
+
+    QGraphicsScene scene;
 };
 
 #endif // MAINWINDOW_H
