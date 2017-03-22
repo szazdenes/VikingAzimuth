@@ -18,7 +18,7 @@ void computation::slotCompute()
     if(!fileName.isEmpty() && !fileName.isNull()){
         QFile file(fileName);
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-            qDebug("Opening error.");
+            qDebug("Opening error of input file.");
         }
         QTextStream stream(&file);
 
@@ -39,7 +39,7 @@ void computation::slotCompute()
     QMap<int, double> trueAzimuthMap;
     QFile azimuthFile("../trueAzimuth.dat");
     if(!azimuthFile.open(QIODevice::ReadOnly | QIODevice::Text)){
-        qDebug("Opening error.");
+        qDebug("Opening error with trueAzimuth.dat.");
     }
     QTextStream stream(&azimuthFile);
 
@@ -52,14 +52,15 @@ void computation::slotCompute()
     azimuthFile.close();
 
 
-    /*convert string list to double list, use central angle correction, calculate delta azimuth with average and StD*/
+    /*convert string list to double list, use laser pointer correction and central angle correction, calculate delta azimuth with average and StD*/
     QMap<int, QList<double> > azimuthDoubleMap, deltaAzimuthMap;
     QMap<int, QPair<double, double> >  aveStDMap;
+    double lpCorrection = 0.0; //laser pointer correction
     if(!azimuthMap.isEmpty() && azimuthMap.size() == elevationList.size()){
         foreach(int currentKey, azimuthMap.keys()){
             QList<double> currentList, deltaList;
             foreach(QString current, azimuthMap[currentKey]){
-                double correctedValue = centralAngleCorrection(current.toDouble());
+                double correctedValue = centralAngleCorrection(current.toDouble() + lpCorrection);
                 currentList.append(correctedValue);
                 deltaList.append(correctedValue - trueAzimuthMap[currentKey]);
             }

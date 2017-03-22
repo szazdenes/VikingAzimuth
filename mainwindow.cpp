@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect(this, &MainWindow::signalOutFileReady, this, &MainWindow::slotOutFileReady);
+
     qRegisterMetaType<QMap<int, QPair<double, double> > >("QMap<int, QPair<double, double> >");
 
     QFile file("../okol_sorrend.dat");
@@ -23,13 +25,17 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     file.close();
 
-    QThread *thread = new QThread();
-    computation *work = new computation("../SD.dat", elevationList);
-    work->moveToThread(thread);
+    QStringList fileNames = QStringList() << "../EA.dat" << "../FA.dat" << "../HG.dat" << "../KB.dat" << "../PA.dat" << "../PI.dat" << "../SD.dat" << "../SM.dat" << "../SS.dat" << "../ST.dat" << "../TP.dat";
 
-    connect(thread, &QThread::started, work, &computation::slotCompute);
-    connect(work, &computation::signalReady, this, &MainWindow::slotComputingReady);
-    connect(thread, &QThread::finished, work, &computation::deleteLater);
+    QThread *thread = new QThread;
+
+    foreach(QString currentFile, fileNames){
+        computation *work = new computation(currentFile, elevationList);
+        work->moveToThread(thread);
+        connect(thread, &QThread::started, work, &computation::slotCompute);
+        connect(work, &computation::signalReady, this, &MainWindow::slotComputingReady);
+        connect(thread, &QThread::finished, work, &computation::deleteLater);
+    }
 
     thread->start();
     thread->quit();
@@ -57,6 +63,7 @@ void MainWindow::slotComputingReady(QMap<int, QPair<double, double> > aveStD, QS
         out << QString::number(currentkey) << "\t" << QString::number(aveStD[currentkey].first) << "\t" << QString::number(aveStD[currentkey].second) << "\n";
     }
     outfile.close();
+    emit signalOutFileReady(filename);
 }
 
 
@@ -68,6 +75,12 @@ void MainWindow::on_loadPushButton_clicked()
 
    plotGnuPlot(filename + ".png", filename + ".ps", filename + ".dat", QString("Azimuth error"), QString("Elevation"), QString("5:60"), QString("-10:10"));
    refreshImage(filename + ".png");
+}
+
+void MainWindow::slotOutFileReady(QString filename)
+{
+    ui->listWidget->addItem(filename + " processed.");
+    ui->listWidget->scrollToBottom();
 }
 
 void MainWindow::plotGnuPlot(QString outfileName, QString outfileNameps, QString plotfileName, QString xlabel, QString ylabel, QString xrange, QString yrange)

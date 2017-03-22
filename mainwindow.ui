@@ -39,7 +39,14 @@
       <property name="title">
        <string>Statistics</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_4"/>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="1" column="0">
+        <widget class="QTableWidget" name="tableWidget"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QListWidget" name="listWidget"/>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
@@ -50,7 +57,7 @@
      <x>0</x>
      <y>0</y>
      <width>781</width>
-     <height>20</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>
