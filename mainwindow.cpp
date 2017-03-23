@@ -73,7 +73,7 @@ void MainWindow::on_loadPushButton_clicked()
 
    filename.remove(".dat");
 
-   plotGnuPlot(filename + ".png", filename + ".ps", filename + ".dat", QString("Azimuth error"), QString("Elevation"), QString("5:60"), QString("-10:10"));
+   plotGnuPlot(filename + ".png", filename + ".ps", filename + ".dat", QString("elevation"), QString("azimuth error"), QString("5:60"), QString("-10:10"));
    refreshImage(filename + ".png");
 }
 
