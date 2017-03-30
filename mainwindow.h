@@ -35,6 +35,8 @@ private slots:
     void on_loadPushButton_clicked();
     void slotOutFileReady(QString filename);
 
+    void on_processingPushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QList<int> elevationList;

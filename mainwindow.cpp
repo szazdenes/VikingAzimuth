@@ -24,22 +24,6 @@ MainWindow::MainWindow(QWidget *parent) :
         elevationList.append(QString(line.split("\t").last()).toInt());
     }
     file.close();
-
-    QStringList fileNames = QStringList() << "../EA.dat" << "../FA.dat" << "../HG.dat" << "../KB.dat" << "../PA.dat" << "../PI.dat" << "../SD.dat" << "../SM.dat" << "../SS.dat" << "../ST.dat" << "../TP.dat";
-
-    QThread *thread = new QThread;
-
-    foreach(QString currentFile, fileNames){
-        computation *work = new computation(currentFile, elevationList);
-        work->moveToThread(thread);
-        connect(thread, &QThread::started, work, &computation::slotCompute);
-        connect(work, &computation::signalReady, this, &MainWindow::slotComputingReady);
-        connect(thread, &QThread::finished, work, &computation::deleteLater);
-    }
-
-    thread->start();
-    thread->quit();
-
 }
 
 MainWindow::~MainWindow()
@@ -122,4 +106,22 @@ void MainWindow::fitImage(QImage &image, QGraphicsView *view)
     zoom *= fitSize;
 
     view->scale(zoom, zoom);
+}
+
+void MainWindow::on_processingPushButton_clicked()
+{
+    QStringList fileNames = QStringList() << "../EA.dat" << "../FA.dat" << "../HG.dat" << "../KB.dat" << "../PA.dat" << "../PI.dat" << "../SD.dat" << "../SM.dat" << "../SS.dat" << "../ST.dat" << "../TP.dat";
+
+    QThread *thread = new QThread;
+
+    foreach(QString currentFile, fileNames){
+        computation *work = new computation(currentFile, elevationList);
+        work->moveToThread(thread);
+        connect(thread, &QThread::started, work, &computation::slotCompute);
+        connect(work, &computation::signalReady, this, &MainWindow::slotComputingReady);
+        connect(thread, &QThread::finished, work, &computation::deleteLater);
+    }
+
+    thread->start();
+    thread->quit();
 }
