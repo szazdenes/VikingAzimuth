@@ -56,6 +56,8 @@ void MainWindow::on_loadPushButton_clicked()
    QString filename = QFileDialog::getOpenFileName(this, "Open file", "../", "*result.dat");
 
    filename.remove(".dat");
+   if(ui->perspectiveCheckBox->isChecked())
+       filename.append("_elev_corr");
 
    plotGnuPlot(filename + ".png", filename + ".ps", filename + ".dat", QString("elevation"), QString("azimuth error"), QString("5:60"), QString("-10:10"));
    refreshImage(filename + ".png");
@@ -112,10 +114,15 @@ void MainWindow::on_processingPushButton_clicked()
 {
     QStringList fileNames = QStringList() << "../EA.dat" << "../FA.dat" << "../HG.dat" << "../KB.dat" << "../PA.dat" << "../PI.dat" << "../SD.dat" << "../SM.dat" << "../SS.dat" << "../ST.dat" << "../TP.dat";
 
-    QThread *thread = new QThread;
+    bool checkstate;
+    if(ui->perspectiveCheckBox->isChecked())
+        checkstate = true;
+    if(!ui->perspectiveCheckBox->isChecked())
+        checkstate = false;
 
+    QThread *thread = new QThread;
     foreach(QString currentFile, fileNames){
-        computation *work = new computation(currentFile, elevationList);
+        computation *work = new computation(currentFile, elevationList, checkstate);
         work->moveToThread(thread);
         connect(thread, &QThread::started, work, &computation::slotCompute);
         connect(work, &computation::signalReady, this, &MainWindow::slotComputingReady);
@@ -124,4 +131,7 @@ void MainWindow::on_processingPushButton_clicked()
 
     thread->start();
     thread->quit();
+
+    ui->listWidget->addItem("--------------------------------------");
+    ui->listWidget->scrollToBottom();
 }

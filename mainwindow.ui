@@ -21,20 +21,27 @@
        <string>Plot</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QPushButton" name="loadPushButton">
          <property name="text">
           <string>Load and plot</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QGraphicsView" name="graphicsView"/>
        </item>
-       <item row="0" column="0">
+       <item row="1" column="0">
         <widget class="QPushButton" name="processingPushButton">
          <property name="text">
           <string>Start processing</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="perspectiveCheckBox">
+         <property name="text">
+          <string>perspective correction for elevation</string>
          </property>
         </widget>
        </item>

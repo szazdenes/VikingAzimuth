@@ -1,9 +1,10 @@
 #include "computation.h"
 
-computation::computation(QString filename, QList<int> elevList)
+computation::computation(QString filename, QList<int> elevList, bool checkstate)
 {
     fileName = filename;
     elevationList = elevList;
+    checkState = checkstate;
 }
 
 computation::~computation()
@@ -52,7 +53,7 @@ void computation::slotCompute()
     azimuthFile.close();
 
 
-    /*convert string list to double list, use laser pointer correction and central angle correction, calculate delta azimuth with average and StD*/
+    /*convert string list to double list, use laser pointer correction and perspective correction, calculate delta azimuth with average and StD*/
     QMap<int, QList<double> > azimuthDoubleMap, deltaAzimuthMap;
     QMap<int, QPair<double, double> >  aveStDMap;
     double lpCorrection = 0.0; //laser pointer correction
@@ -60,9 +61,10 @@ void computation::slotCompute()
         foreach(int currentKey, azimuthMap.keys()){
             QList<double> currentList, deltaList;
             foreach(QString current, azimuthMap[currentKey]){
-                double correctedValue = centralAngleCorrection(current.toDouble() + lpCorrection);
+                double correctedValue = current.toDouble() + lpCorrection;
+                double correctedAzimuth = azimuthCorrection(trueAzimuthMap[currentKey], (double)currentKey, checkState);
                 currentList.append(correctedValue);
-                deltaList.append(correctedValue - trueAzimuthMap[currentKey]);
+                deltaList.append(correctedValue - correctedAzimuth);
             }
             azimuthDoubleMap[currentKey] = currentList;
             deltaAzimuthMap[currentKey] = deltaList;
@@ -77,6 +79,8 @@ void computation::slotCompute()
 
     emit signalReady(aveStDMap, fileName);
 }
+
+/*not used*/
 
 double computation::centralAngleCorrection(double num)
 {
@@ -125,6 +129,33 @@ double computation::centralAngleCorrection(double num)
     }
 
     return result;
+}
+
+double computation::azimuthCorrection(double azimuth, double elevation, bool isElevationCorrOn)
+{
+    double correctedAzimuth;
+    double s=0.8, R=4;
+
+    if(isElevationCorrOn){
+        double r = R*qCos(elevation*M_PI/180.0);
+        double cosBeta = (s*(s+r*qSin(azimuth*M_PI/180.0))+r*R*qCos(azimuth*M_PI/180.0)) / qSqrt((s*s+R*R)*(s*s+r*r+2*s*r*qSin(azimuth*M_PI/180.0)));
+        correctedAzimuth = qAcos(cosBeta) * 180.0/M_PI;
+        if(azimuth < 0){
+            correctedAzimuth *= -1;
+            double elev_intersect = qAcos(qSqrt((1+qTan(azimuth*M_PI/180.0)*qTan(azimuth*M_PI/180.0)) / ((s-R*qTan(azimuth*M_PI/180.0))*(s-R*qTan(azimuth*M_PI/180.0))))) * 180.0/M_PI;
+            if(elevation > elev_intersect)
+                correctedAzimuth *= -1;
+        }
+    }
+
+    if(!isElevationCorrOn){
+        double cosBeta = (s*(s+R*qSin(azimuth*M_PI/180.0))+R*R*qCos(azimuth*M_PI/180.0)) / qSqrt((s*s+R*R)*(s*s+R*R+2*s*R*qSin(azimuth*M_PI/180.0)));
+        correctedAzimuth = qAcos(cosBeta) * 180.0/M_PI;
+        if(azimuth < 0)
+            correctedAzimuth *= -1;
+    }
+
+    return correctedAzimuth;
 }
 
 double computation::getAverage(QList<double> &list)
