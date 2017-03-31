@@ -15,6 +15,7 @@ public:
 
 signals:
     void signalReady(QMap<int, QPair<double, double> > aveStD, QString filename);
+    void signalSendCorrectedAzimuth(QMap<int, QPair<double, double> > corrAzimuth, QMap<int, double> trueAzimuth);
 
 public slots:
     void slotCompute();

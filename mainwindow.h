@@ -28,19 +28,20 @@ signals:
     void signalOutFileReady(QString filename);
 
 public slots:
-    void slotComputingReady(QMap<int, QPair<double, double> > aveStD, QString filename);
 
 private slots:
 
     void on_loadPushButton_clicked();
     void slotOutFileReady(QString filename);
-
+    void slotComputingReady(QMap<int, QPair<double, double> > aveStD, QString filename);
+    void slotCorrectedAzimuth(QMap<int, QPair<double, double> > corrAzimuth, QMap<int, double> trueAzimuth);
     void on_processingPushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     QList<int> elevationList;
     void plotGnuPlot(QString outfileName, QString outfileNameps, QString plotfileName, QString xlabel, QString ylabel, QString xrange, QString yrange);
+    void plotCorrectedAzimuth(QString outfileName, QString outfileNameps, QString plotfileName, QString xlabel, QString ylabel, QString xrange, QString yrange);
     void refreshImage(QString imageName);
     void fitImage(QImage &image, QGraphicsView *view);
 

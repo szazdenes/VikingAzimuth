@@ -55,11 +55,14 @@ void computation::slotCompute()
 
     /*convert string list to double list, use laser pointer correction and perspective correction, calculate delta azimuth with average and StD*/
     QMap<int, QList<double> > azimuthDoubleMap, deltaAzimuthMap;
-    QMap<int, QPair<double, double> >  aveStDMap;
+    QMap<int, QPair<double, double> >  aveStDMap, correctedAzimuthMap;
+
     double lpCorrection = 0.0; //laser pointer correction
+
     if(!azimuthMap.isEmpty() && azimuthMap.size() == elevationList.size()){
         foreach(int currentKey, azimuthMap.keys()){
             QList<double> currentList, deltaList;
+            correctedAzimuthMap[currentKey] = QPair<double, double>(azimuthCorrection(trueAzimuthMap[currentKey], (double)currentKey, false), azimuthCorrection(trueAzimuthMap[currentKey], (double)currentKey, true));
             foreach(QString current, azimuthMap[currentKey]){
                 double correctedValue = current.toDouble() + lpCorrection;
                 double correctedAzimuth = azimuthCorrection(trueAzimuthMap[currentKey], (double)currentKey, checkState);
@@ -78,6 +81,7 @@ void computation::slotCompute()
     }
 
     emit signalReady(aveStDMap, fileName);
+    emit signalSendCorrectedAzimuth(correctedAzimuthMap, trueAzimuthMap);
 }
 
 /*not used*/
