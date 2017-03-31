@@ -39,7 +39,7 @@ void MainWindow::slotComputingReady(QMap<int, QPair<double, double> > aveStD, QS
     if(!outfile.open(QIODevice::WriteOnly | QIODevice::Text)){
         qDebug("Opening error.");
     }
-    elevationList.clear();
+
     QTextStream out(&outfile);
     out << "#elevation" << "\t" << "average" << "\t" << "StD" << "\n";
 
