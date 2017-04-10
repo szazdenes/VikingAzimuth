@@ -81,7 +81,7 @@ void MainWindow::slotCorrectedAzimuth(QMap<int, QPair<double, double> > corrAzim
     QString filename = outfile.fileName();
     filename.remove(".dat");
 
-    plotCorrectedAzimuth(filename + ".png", filename + ".ps", filename + ".dat", QString("elevation"), QString("azimuth error"), QString("5:60"), QString("-60:60"));
+    plotCorrectedAzimuth(filename + ".png", filename + ".ps", filename + ".dat", QString("elevation"), QString("azimuth"), QString("5:60"), QString("-60:60"));
 
 }
 
