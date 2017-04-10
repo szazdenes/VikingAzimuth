@@ -34,7 +34,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::slotComputingReady(QMap<int, QPair<double, double> > aveStD, QString filename)
 {
-    allResultList.append(aveStD);
     filename.remove(".dat").append("_result.dat");
     QFile outfile(filename);
 
@@ -154,9 +153,7 @@ void MainWindow::on_processingPushButton_clicked()
     if(!QDir("../results").exists())
         QDir().mkdir("../results");
 
-    allResultList.clear();
-
-    QStringList fileNames = QStringList() << "../EA.dat" << "../FA.dat" << "../HG.dat" << "../KB.dat" << "../PA.dat" << "../PI.dat" << "../SD.dat" << "../SM.dat" << "../SS.dat" << "../ST.dat" << "../TP.dat";
+    QStringList fileNames = QStringList() << "../EA.dat" << "../FA.dat" << "../HG.dat" << "../KB.dat" << "../PA.dat" << "../PI.dat" << "../SD.dat" << "../SM.dat" << "../SS.dat" << "../ST.dat" << "../TP.dat" << "../allazimuth.dat";
 
     bool checkstate;
     if(ui->perspectiveCheckBox->isChecked())

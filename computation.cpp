@@ -57,7 +57,7 @@ void computation::slotCompute()
     QMap<int, QList<double> > azimuthDoubleMap, deltaAzimuthMap;
     QMap<int, QPair<double, double> >  aveStDMap, correctedAzimuthMap;
 
-    double lpCorrection = 0.0; //laser pointer correction
+    double lpCorrection = 1.96; //laser pointer correction
 
     if(!azimuthMap.isEmpty() && azimuthMap.size() == elevationList.size()){
         foreach(int currentKey, azimuthMap.keys()){
