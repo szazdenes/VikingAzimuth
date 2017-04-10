@@ -46,6 +46,7 @@ private:
     void fitImage(QImage &image, QGraphicsView *view);
 
     QGraphicsScene scene;
+    QList<QMap<int, QPair<double, double> > > allResultList;
 };
 
 #endif // MAINWINDOW_H

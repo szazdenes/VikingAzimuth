@@ -34,6 +34,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::slotComputingReady(QMap<int, QPair<double, double> > aveStD, QString filename)
 {
+    allResultList.append(aveStD);
     filename.remove(".dat").append("_result.dat");
     QFile outfile(filename);
 
@@ -87,8 +88,6 @@ void MainWindow::slotCorrectedAzimuth(QMap<int, QPair<double, double> > corrAzim
 
 void MainWindow::on_loadPushButton_clicked()
 {
-   if(!QDir("../results").exists())
-       QDir().mkdir("../results");
    QString filename = QFileDialog::getOpenFileName(this, "Open file", "../results", "*.png");
    refreshImage(filename);
 }
@@ -152,6 +151,11 @@ void MainWindow::fitImage(QImage &image, QGraphicsView *view)
 
 void MainWindow::on_processingPushButton_clicked()
 {
+    if(!QDir("../results").exists())
+        QDir().mkdir("../results");
+
+    allResultList.clear();
+
     QStringList fileNames = QStringList() << "../EA.dat" << "../FA.dat" << "../HG.dat" << "../KB.dat" << "../PA.dat" << "../PI.dat" << "../SD.dat" << "../SM.dat" << "../SS.dat" << "../ST.dat" << "../TP.dat";
 
     bool checkstate;
