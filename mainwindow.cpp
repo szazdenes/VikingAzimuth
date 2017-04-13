@@ -153,7 +153,7 @@ void MainWindow::on_processingPushButton_clicked()
     if(!QDir("../results").exists())
         QDir().mkdir("../results");
 
-    QStringList fileNames = QStringList() << "../EA.dat" << "../FA.dat" << "../HG.dat" << "../KB.dat" << "../PA.dat" << "../PI.dat" << "../SD.dat" << "../SM.dat" << "../SS.dat" << "../ST.dat" << "../TP.dat" << "../allazimuth.dat";
+    QStringList fileNames = QStringList() << "../EA.dat" << "../FA.dat" << "../HG.dat" << "../KB.dat" << "../PA.dat" << "../PI.dat" << "../SD.dat" << "../SM.dat" << "../SS.dat" << "../ST.dat" << "../TP.dat" << "../allazimuth.dat" << "../allazimuth_noEA.dat";
 
     bool checkstate;
     if(ui->perspectiveCheckBox->isChecked())
