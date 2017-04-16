@@ -21,17 +21,17 @@
        <string>Plot</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QPushButton" name="loadPushButton">
          <property name="text">
           <string>Load and plot</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QGraphicsView" name="graphicsView"/>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QPushButton" name="processingPushButton">
          <property name="text">
           <string>Start processing</string>
@@ -42,6 +42,13 @@
         <widget class="QCheckBox" name="perspectiveCheckBox">
          <property name="text">
           <string>perspective correction for elevation</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="linearCheckBox">
+         <property name="text">
+          <string>linear correction</string>
          </property>
         </widget>
        </item>
@@ -71,7 +78,7 @@
      <x>0</x>
      <y>0</y>
      <width>781</width>
-     <height>20</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>

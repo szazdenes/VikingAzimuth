@@ -10,7 +10,7 @@ class computation : public QObject
 {
     Q_OBJECT
 public:
-    explicit computation(QString filename = NULL, QList<int> elevList = QList<int>(), bool checkstate = false);
+    explicit computation(QString filename = NULL, QList<int> elevList = QList<int>(), bool checkstate = false, bool linearcheck = false);
     ~computation();
 
 signals:
@@ -23,11 +23,12 @@ public slots:
 private:
     QString fileName;
     QList<int> elevationList;
-    bool checkState;
+    bool checkState, linearCheck;
     double centralAngleCorrection(double num);
-    double azimuthCorrection(double azimuth, double elevation, bool isElevationCorrOn);
+    double azimuthCorrection(double azimuth, double elevation, bool isElevationCorrOn, bool isLinearCheckOn);
     double getAverage(QList<double> &list);
     double getStD(QList<double> &list);
+    double linearCorrection(double elev);
 };
 
 #endif // COMPUTATION_H

@@ -1,10 +1,11 @@
 #include "computation.h"
 
-computation::computation(QString filename, QList<int> elevList, bool checkstate)
+computation::computation(QString filename, QList<int> elevList, bool checkstate, bool linearcheck)
 {
     fileName = filename;
     elevationList = elevList;
     checkState = checkstate;
+    linearCheck = linearcheck;
 }
 
 computation::~computation()
@@ -53,7 +54,7 @@ void computation::slotCompute()
     azimuthFile.close();
 
 
-    /*convert string list to double list, use laser pointer correction and perspective correction, calculate delta azimuth with average and StD*/
+    /*convert string list to double list, use laser pointer correction, perspective correction and linear correction, calculate delta azimuth with average and StD*/
     QMap<int, QList<double> > azimuthDoubleMap, deltaAzimuthMap;
     QMap<int, QPair<double, double> >  aveStDMap, correctedAzimuthMap;
 
@@ -62,10 +63,10 @@ void computation::slotCompute()
     if(!azimuthMap.isEmpty() && azimuthMap.size() == elevationList.size()){
         foreach(int currentKey, azimuthMap.keys()){
             QList<double> currentList, deltaList;
-            correctedAzimuthMap[currentKey] = QPair<double, double>(azimuthCorrection(trueAzimuthMap[currentKey], (double)currentKey, false), azimuthCorrection(trueAzimuthMap[currentKey], (double)currentKey, true));
+            correctedAzimuthMap[currentKey] = QPair<double, double>(azimuthCorrection(trueAzimuthMap[currentKey], (double)currentKey, false, false), azimuthCorrection(trueAzimuthMap[currentKey], (double)currentKey, true, false));
             foreach(QString current, azimuthMap[currentKey]){
                 double correctedValue = current.toDouble() + lpCorrection;
-                double correctedAzimuth = azimuthCorrection(trueAzimuthMap[currentKey], (double)currentKey, checkState);
+                double correctedAzimuth = azimuthCorrection(trueAzimuthMap[currentKey], (double)currentKey, checkState, linearCheck);
                 currentList.append(correctedValue);
                 deltaList.append(correctedValue - correctedAzimuth);
             }
@@ -135,7 +136,7 @@ double computation::centralAngleCorrection(double num)
     return result;
 }
 
-double computation::azimuthCorrection(double azimuth, double elevation, bool isElevationCorrOn)
+double computation::azimuthCorrection(double azimuth, double elevation, bool isElevationCorrOn, bool isLinearCheckOn)
 {
     double correctedAzimuth;
     double s=0.8, R=4;
@@ -159,6 +160,9 @@ double computation::azimuthCorrection(double azimuth, double elevation, bool isE
             correctedAzimuth *= -1;
     }
 
+    if(isLinearCheckOn)
+        correctedAzimuth += linearCorrection(elevation);
+
     return correctedAzimuth;
 }
 
@@ -177,5 +181,11 @@ double computation::getStD(QList<double> &list)
     for (int i = 0; i < list.size(); i++)
         result += (((double)list.at(i) - average)*((double)list.at(i) - average)) / (double)list.size();
     result = qSqrt(result);
+    return result;
+}
+
+double computation::linearCorrection(double elev)
+{
+    double result = 0.0378357*elev - 0.261522;
     return result;
 }

@@ -34,7 +34,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::slotComputingReady(QMap<int, QPair<double, double> > aveStD, QString filename)
 {
-    filename.remove(".dat").append("_result.dat");
+    filename.remove(".dat");
+    if(ui->perspectiveCheckBox->isChecked())
+        filename.append("_elev_corr");
+    if(ui->linearCheckBox->isChecked())
+        filename.append("_linear_corr");
+    filename.append("_result.dat");
+
     QFile outfile(filename);
 
     if(!outfile.open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -53,8 +59,6 @@ void MainWindow::slotComputingReady(QMap<int, QPair<double, double> > aveStD, QS
     QString dataFilename = filename;
     filename.insert(3, "results/");
     QString outFilename = filename;
-    if(ui->perspectiveCheckBox->isChecked())
-        outFilename.append("_elev_corr");
 
     plotGnuPlot(outFilename + ".png", outFilename + ".ps", dataFilename + ".dat", QString("elevation"), QString("azimuth error"), QString("5:60"), QString("-10:10"));
 
@@ -155,16 +159,20 @@ void MainWindow::on_processingPushButton_clicked()
 
     QStringList fileNames = QStringList() << "../EA.dat" << "../FA.dat" << "../HG.dat" << "../KB.dat" << "../PA.dat" << "../PI.dat" << "../SD.dat" << "../SM.dat" << "../SS.dat" << "../ST.dat" << "../TP.dat" << "../allazimuth.dat" << "../allazimuth_noEA.dat";
 
-    bool checkstate;
+    bool checkstate, linearCheck;
     if(ui->perspectiveCheckBox->isChecked())
         checkstate = true;
     if(!ui->perspectiveCheckBox->isChecked())
         checkstate = false;
+    if(ui->linearCheckBox->isChecked())
+        linearCheck = true;
+    if(!ui->linearCheckBox->isChecked())
+        linearCheck = false;
 
     QThread *thread = new QThread;
     computation *work;
     foreach(QString currentFile, fileNames){
-        work = new computation(currentFile, elevationList, checkstate);
+        work = new computation(currentFile, elevationList, checkstate, linearCheck);
         work->moveToThread(thread);
         connect(thread, &QThread::started, work, &computation::slotCompute);
         connect(work, &computation::signalReady, this, &MainWindow::slotComputingReady);
